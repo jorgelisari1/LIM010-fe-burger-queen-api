@@ -30,3 +30,6 @@ routes(app, (err) => {
     console.info(`App listening on port ${port}`);
   });
 });
+
+
+// mongodb+srv://yesseliz:<password>@cluster0-ilhxn.mongodb.net/test?retryWrites=true&w=majority
