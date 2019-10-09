@@ -8,8 +8,7 @@ const pkg = require('./package.json');
 const { port, dbUrl, secret } = config;
 const app = express();
 
-// TODO: Conección a la BD en mogodb
-
+// TODO: Conección a la BD en mogodbs
 app.set('config', config);
 app.set('pkg', pkg);
 
