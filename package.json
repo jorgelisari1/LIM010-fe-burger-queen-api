@@ -19,8 +19,9 @@
   "dependencies": {
     "bcrypt": "3.0.6",
     "body-parser": "1.19.0",
-    "express": "4.17.1",
-    "jsonwebtoken": "8.5.1"
+    "express": "^4.17.1",
+    "jsonwebtoken": "8.5.1",
+    "mongodb": "^3.3.2"
   },
   "devDependencies": {
     "docdash": "1.1.1",
@@ -32,5 +33,16 @@
     "jsdoc-http-plugin": "0.3.1",
     "node-fetch": "2.6.0",
     "tree-kill": "1.2.1"
-  }
+  },
+  "description": "## Índice",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesselizCB/LIM010-fe-burger-queen-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/JesselizCB/LIM010-fe-burger-queen-api/issues"
+  },
+  "homepage": "https://github.com/JesselizCB/LIM010-fe-burger-queen-api#readme"
 }

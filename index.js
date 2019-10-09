@@ -4,11 +4,20 @@ const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
+const mongoClient = require('mongodb').MongoClient;
+// const morgan = require('morgan'); app.use(morgan('dev'));
 
 const { port, dbUrl, secret } = config;
 const app = express();
 
 // TODO: Conección a la BD en mogodb
+mongoClient.connect(dbUrl)
+.then((db) => {
+  console.log('db is connected');
+}).catch(err => console.log(err));
+/* .then(db => console.log('db is connected'))
+.catch(err => console.log(err));
+ */
 
 app.set('config', config);
 app.set('pkg', pkg);
