@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const user = require('../model/modelUser.js');
 //var moment = require('moment');
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
@@ -37,7 +36,7 @@ module.exports.isAuthenticated = (req) => (
 
 module.exports.isAdmin = (req) => {
 // TODO: decidir por la informacion del request si la usuaria es admin
-req.headers.user && req.headers.user.roles.default.admin
+req.headers.user && req.headers.user.roles.admin
 };
 
 module.exports.requireAuth = (req, resp, next) => (

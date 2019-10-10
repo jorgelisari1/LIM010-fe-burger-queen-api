@@ -22,7 +22,16 @@ const initAdminUser = (app, next) => {
   };
 
   // TODO: crear usuaria admin
-  next();
+  let userAdmin = new users()
+            userAdmin.email = adminUser.email;
+            userAdmin.password = adminUser.password;
+            userAdmin.roles = adminUser.roles;
+            userAdmin.save((err, userStored) => {
+                if (err) {
+                    console.log(err);
+                }
+                next();
+            })
 };
 
 

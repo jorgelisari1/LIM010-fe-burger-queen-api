@@ -22,12 +22,6 @@ const UserSchema = Schema({
         required: true,
         default: { admin: false }
     }
-    /*roles: {
-        admin: {
-            type: Boolean,
-            required: false,
-          },
-        }*/
     
 });
 // Exportamos el modelo para usarlo en otros ficheros
