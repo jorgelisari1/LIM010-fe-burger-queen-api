@@ -4,8 +4,10 @@ const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
-const mongoClient = require('mongodb').MongoClient;
+// const mongoClient = require('mongodb').MongoClient;
 // const morgan = require('morgan'); app.use(morgan('dev'));
+// Cargamos el módulo de mongoose para poder conectarnos a MongoDB
+var mongoose = require('mongoose');
 
 // Llamamos a express para poder crear el servidor
 const app = express();
@@ -28,7 +30,7 @@ app.use(express.json());
 app.use(authMiddleware(secret));
 
 // TODO: Conección a la BD en mogodb
-mongoClient.connect(dbUrl)
+mongoose.connect(dbUrl)
 .then((db) => {
   console.log('db is connected');
   // Registrar rutas

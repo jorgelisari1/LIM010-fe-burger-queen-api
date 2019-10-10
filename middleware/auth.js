@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
-
   if (!authorization) {
     return next();
   }
@@ -18,8 +17,13 @@ module.exports = (secret) => (req, resp, next) => {
     if (err) {
       return next(403);
     }
-    console.log(decodedToken.uid);
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
+    users.findOne({ _id: decodedToken.uid }, (err, user) => {
+      if (err) { return next(500, err) }
+      req.headers.user = user;
+      next();
+  })
+    
   });
 };
 
