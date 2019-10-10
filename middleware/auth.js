@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+//var moment = require('moment');
 
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
@@ -17,7 +18,7 @@ module.exports = (secret) => (req, resp, next) => {
     if (err) {
       return next(403);
     }
-
+    console.log(decodedToken.uid);
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
   });
 };
