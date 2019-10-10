@@ -27,17 +27,20 @@ module.exports = (secret) => (req, resp, next) => {
   });
 };
 
-
 module.exports.isAuthenticated = (req) => (
   // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  false
+  (req.headers.user) ? true : false
 );
 
 
-module.exports.isAdmin = (req) => (
-  // TODO: decidir por la informacion del request si la usuaria es admin
-  false
-);
+module.exports.isAdmin = (req) => {
+// TODO: decidir por la informacion del request si la usuaria es admin
+
+};
+
+
+  
+
 
 
 module.exports.requireAuth = (req, resp, next) => (
