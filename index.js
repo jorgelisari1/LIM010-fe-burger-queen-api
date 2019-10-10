@@ -10,10 +10,8 @@ const mongoClient = require('mongodb').MongoClient;
 const { port, dbUrl, secret } = config;
 const app = express();
 
-/* .then(db => console.log('db is connected'))
-.catch(err => console.log(err));
- */
 app.set('config', config);
+
 app.set('pkg', pkg);
 
 // parse application/x-www-form-urlencoded
@@ -39,7 +37,6 @@ routes(app, (err) => {
 });
 
 }).catch(err => console.log(err));
-
 
 
 // mongodb+srv://yesseliz:<password>@cluster0-ilhxn.mongodb.net/test?retryWrites=true&w=majority
