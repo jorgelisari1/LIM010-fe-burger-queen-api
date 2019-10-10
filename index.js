@@ -10,11 +10,6 @@ const mongoClient = require('mongodb').MongoClient;
 const { port, dbUrl, secret } = config;
 const app = express();
 
-
-/* .then(db => console.log('db is connected'))
-.catch(err => console.log(err));
- */
-
 app.set('config', config);
 app.set('pkg', pkg);
 
@@ -28,20 +23,16 @@ mongoClient.connect(dbUrl)
 .then((db) => {
   console.log('db is connected');
   // Registrar rutas
-routes(app, (err) => {
-  if (err) {
-    throw err;
-  }
-
-  app.use(errorHandler);
-
-  app.listen(port, () => {
-    console.info(`App listening on port ${port}`);
+  routes(app, (err) => {
+    if (err) {
+      throw err;
+    }
+  
+    app.use(errorHandler);
+  
+    app.listen(port, () => {
+      console.info(`App listening on port ${port}`);
+    });
   });
-});
-
 }).catch(err => console.log(err));
 
-
-
-// mongodb+srv://yesseliz:<password>@cluster0-ilhxn.mongodb.net/test?retryWrites=true&w=majority
