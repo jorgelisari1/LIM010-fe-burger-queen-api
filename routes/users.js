@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const postUser = require('../controller/users');
 
 const {
   requireAuth,
@@ -123,8 +124,7 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si ya existe usuaria con ese `email`
    */
-  app.post('/users', requireAdmin, (req, resp, next) => {
-  });
+  app.post('/users', requireAdmin, postUser);
 
   /**
    * @name PUT /users
