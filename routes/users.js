@@ -32,8 +32,7 @@ const initAdminUser = (app, next) => {
                 }
                 next();
             })
-};
-
+}
 
 /*
  * Diagrama de flujo de una aplicación y petición en node - express :
