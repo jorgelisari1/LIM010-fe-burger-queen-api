@@ -22,6 +22,7 @@ const UserSchema = Schema({
         required: true,
         default: { admin: false }
     }
+    
 });
 // Exportamos el modelo para usarlo en otros ficheros
 module.exports = mongoose.model('User', UserSchema);

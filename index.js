@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 // console.log('bodyparser', app.use(bodyParser.json()));
 
 app.set('config', config);
+
 app.set('pkg', pkg);
 
 // parse application/x-www-form-urlencoded
