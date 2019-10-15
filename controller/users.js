@@ -1,5 +1,26 @@
-const users = require('../models/modelUsers');
+const users = require('../model/modelUsers');
 const bcrypt = require('bcrypt');
+
+module.exports.getUsers = (req, resp, next) => {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10);
+    const skipValue = page * limit - limit;
+
+    return db().then((db) => {
+      db.collection('users')
+        .find({}, { limit, skip: skipValue || 0 })
+        .toArray()
+        .then((users) => {
+          db.collection('users').count()
+            .then((count) => {
+              const link = pagination('users', count, page, limit);
+              resp.set('link', link.link);
+              resp.send(users);
+              return next();
+            });
+        });
+    });
+  };
 
 module.exports.postUser = async(req, resp, next) => {
   if (!req.body.email || !req.body.password) {
@@ -24,3 +45,6 @@ module.exports.postUser = async(req, resp, next) => {
   });
 
 };
+
+
+  

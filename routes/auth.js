@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-
+const bcrypt = require('bcrypt');
 const { secret } = config;
 
 /** @module auth */
@@ -25,21 +25,23 @@ module.exports = (app, nextMain) => {
     }
     
     // TODO: autenticar a la usuarix
-    user.findOne({ email: req.body.email }, (err, userStored) => {
+    
+    user.findOne({ email: req.body.email }, async(err, userStored) => {
       if (err) {
           return resp.send(err);
       };
       if (!userStored) {
           return next(404);
       };
-      comparePassword(req.body.password, userStored).then((token) => {
+      if (await bcrypt.compare(password, user.password)) {
+        resp.send({ token: jwt.sign({ id: req.body._id }, secret) });
+        next();
+      } else {
+        next(401);
+      }
 
-          if (!token) {
-              return next(401)
-          }
-
-          resp.status(200).send({ token: token });
-      })
+       resp.status(200).send({ token: token });
+      
   })
 });
 
