@@ -1,6 +1,7 @@
+const user = require('../model/modelUsers');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const config = require('../config');
-
 const { secret } = config;
 
 /** @module auth */
@@ -17,6 +18,17 @@ module.exports = (app, nextMain) => {
    * @code {400} si no se proveen `email` o `password` o ninguno de los dos
    * @auth No requiere autenticación
    */
+
+  comparePassword = async(password, userStored) => {
+    const res = await bcrypt.compare(password, userStored.password);
+    if (res) {
+        // console.error(password,userStored.password,'holaa')
+        const token = jwt.sign({ uid: userStored._id }, secret);
+        return token;
+    }
+    return res;
+  };
+
   app.post('/auth', (req, resp, next) => {
     const { email, password } = req.body;
 
@@ -33,15 +45,13 @@ module.exports = (app, nextMain) => {
           return next(404);
       };
       comparePassword(req.body.password, userStored).then((token) => {
-
           if (!token) {
               return next(401)
           }
-
           resp.status(200).send({ token: token });
       })
   })
 });
-
   return nextMain();
 };
+
