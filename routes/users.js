@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
-const {postUser, getUsers,} = require('../controller/users');
 const users = require('../model/modelUsers');
+const { postUser } = require('../controller/users');
 
 const {
   requireAuth,
@@ -12,26 +12,34 @@ const {
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
-    return next();
+    return next(400);
   }
 
-  const adminUser = {
-    email: adminEmail,
-    password: bcrypt.hashSync(adminPassword, 10),
-    roles: { admin: true },
-  };
-
-  // TODO: crear usuaria admin
-  let userAdmin = new users()
-            userAdmin.email = adminUser.email;
-            userAdmin.password = adminUser.password;
-            userAdmin.roles = adminUser.roles;
-            userAdmin.save((err, userStored) => {
-                if (err) {
-                    console.log(err);
-                }
-                next();
-            })
+  users.findOne({ email: adminEmail }, (err, res) => {
+    if (err) {
+      console.log(err)
+    }
+    if (res) {
+      next()
+    } else {
+      const adminUser = {
+        email: adminEmail,
+        password: bcrypt.hashSync(adminPassword, 10),
+        roles: { admin: true },
+      };
+      // TO DO: crear usuarix admin
+      let userAdmin = new users()
+      userAdmin.email = adminUser.email;
+      userAdmin.password = adminUser.password;
+      userAdmin.roles = adminUser.roles;
+      userAdmin.save((err, userStored) => {
+        if (err) {
+          console.log(err);
+        }
+        next();
+      })
+    }
+  })
 }
 
 /*
@@ -83,7 +91,8 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es ni admin
    */
-   app.get('/users', requireAdmin, getUsers);
+
+//  app.get('/users', requireAdmin, getUsers);
 
   /**
    * @name GET /users/:uid
