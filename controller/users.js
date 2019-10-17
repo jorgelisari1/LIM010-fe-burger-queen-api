@@ -1,6 +1,21 @@
-const bcrypt = require('bcrypt');
-const users = require('../model/modelUsers');
-const { isAdmin } = require('../middleware/auth');
+/* eslint-disable no-undef */
+const users = require("../model/modelUsers");
+const bcrypt = require("bcrypt");
+
+module.exports.getUsers = async (req, resp) => {
+  
+  try {
+    const result = await users.find().exec();
+    resp.send(result);
+  } catch (error) {
+    resp.status(500).send(error);
+}
+};
+
+module.exports.getUserId = async (req, resp) => {
+  
+ console.log(req);
+};
 
 module.exports.postUser = async (req, resp, next) => {
   if (!req.body.email || !req.body.password) {
@@ -8,7 +23,7 @@ module.exports.postUser = async (req, resp, next) => {
   }
   const userInvalid = await users.findOne({ email: req.body.email });
   if (userInvalid) return next(403);
-  const newUser = new users();
+  let newUser = new users();
   newUser.email = req.body.email;
   newUser.password = bcrypt.hashSync(req.body.password, 10);
   if (req.body._id) {
@@ -22,7 +37,7 @@ module.exports.postUser = async (req, resp, next) => {
   return resp.send({
     roles: userStored.roles,
     _id: userStored._id.toString(),
-    email: userStored.email,
+    email: userStored.email
   });
 };
 const uidOrEmail = (param) => {
@@ -46,18 +61,23 @@ module.exports.putUser = async (req, resp, next) => {
 
     const obj = uidOrEmail(req.params.uid);
 
-    const userFounded = await users.findOne(obj);
-    if (req.body.email) {
-      userFounded.email = req.body.email;
-    }
-    if (req.body.password) {
-      userFounded.password = bcrypt.hashSync(req.body.password, 10);
-    }
-    const userSaved = await userFounded.save();
-    if (userSaved) {
-      return resp.send({ message: 'Cambios registrados satisfactoriamente' });
-    }
-  } catch (e) {
-    return next(404);
-  }
-};
+//     if (!req.body.email && !req.body.password && !isAdmin(req)) {
+//       return next(400)
+//     }
+    
+//     let obj = uidOrEmail(req.params.uid);
+
+//     const userFounded = await users.findOne(obj);
+//     if (req.body.email) {
+//       userFounded.email = req.body.email;
+//     }
+//     if (req.body.password) {
+//       userFounded.password = bcrypt.hashSync(req.body.password, 10);
+//     }
+//     const userSaved = await userFounded.save();
+//     if (userSaved) {
+//       return resp.send({ message: 'Cambios registrados satisfactoriamente' });
+//     }
+//   } catch (e) {
+//     return next(404)
+//   };
