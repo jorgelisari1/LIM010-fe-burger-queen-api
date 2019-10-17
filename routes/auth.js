@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
 const { secret } = config;
-
 /** @module auth */
 module.exports = (app, nextMain) => {
   /**
