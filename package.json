@@ -6,6 +6,16 @@
   "engines": {
     "node": ">=10"
   },
+  "jest": {
+    "verbose": true
+  },
+  "nodemonConfig": {
+    "events": {
+      "restart": "kill-port 8080",
+      "crash": "kill-port 8080"
+    },
+    "delay": "1500"
+  },
   "scripts": {
     "dev": "nodemon index.js",
     "pretest": "eslint .",
@@ -26,13 +36,14 @@
     "jsonwebtoken": "8.5.1",
     "mongodb": "^3.3.2",
     "mongodb-memory-server": "^5.2.8",
-    "mongoose": "^5.7.4",
-    "node-pre-gyp": "^0.13.0"
+    "mongoose": "^5.7.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "docdash": "1.1.1",
-    "eslint-plugin-react": "^7.16.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "gh-pages": "2.1.1",
     "jest": "^24.9.0",
     "jsdoc": "3.6.3",
