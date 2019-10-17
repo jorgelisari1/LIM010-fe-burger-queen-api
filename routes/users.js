@@ -1,15 +1,13 @@
 const bcrypt = require('bcrypt');
 const users = require('../model/modelUsers');
-const { postUser, putUser } = require('../controller/users');
+const { postUser, getUsers,getUserId, putUser } = require('../controller/users');
 
 const {
   requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
 
-const {
-  getUsers,
-} = require('../controller/users');
+
 
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
@@ -34,7 +32,7 @@ const initAdminUser = (app, next) => {
       userAdmin.email = adminUser.email;
       userAdmin.password = adminUser.password;
       userAdmin.roles = adminUser.roles;
-      userAdmin.save((err, userStored) => {
+      userAdmin.save((err) => {
         if (err) {
           console.log(err);
         }
@@ -94,7 +92,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin
    */
 
-//  app.get('/users', requireAdmin, getUsers);
+ app.get('/users', requireAdmin, getUsers);
 
   /**
    * @name GET /users/:uid
@@ -112,8 +110,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.get('/users/:uid', requireAuth, (req, resp) => {
-  });
+  app.get('/users/:uid', requireAuth, getUserId);
 
   /**
    * @name POST /users
@@ -158,7 +155,7 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  app.put('/users/:uid', requireAdmin, putUser);
+  //app.put('/users/:uid', requireAdmin, putUser);
   /**
    * @name DELETE /users
    * @description Elimina una usuaria
@@ -175,7 +172,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
+ app.delete('/users/:uid', requireAuth, (req, resp, next) => {
   });
 
   initAdminUser(app, next);

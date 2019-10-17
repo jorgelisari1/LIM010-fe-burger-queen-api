@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
 const { secret } = config;
-
 /** @module auth */
 module.exports = (app, nextMain) => {
   /**
@@ -37,13 +36,14 @@ module.exports = (app, nextMain) => {
     }
     
     // TODO: autenticar a la usuarix
-    user.findOne({ email: req.body.email }, (err, userStored) => {
+    
+    user.findOne({ email: req.body.email }, async(err, userStored) => {
       if (err) {
           return resp.send(err);
-      };
+      }
       if (!userStored) {
           return next(404);
-      };
+      }
       comparePassword(req.body.password, userStored).then((token) => {
           if (!token) {
               return next(401)

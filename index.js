@@ -7,13 +7,13 @@ const pkg = require('./package.json');
 // const mongoClient = require('mongodb').MongoClient;
 // const morgan = require('morgan'); app.use(morgan('dev'));
 // Cargamos el módulo de mongoose para poder conectarnos a MongoDB
-var mongoose = require('mongoose');
+const  mongoose = require('mongoose');
 
 // Llamamos a express para poder crear el servidor
 const app = express();
 
 const { port, dbUrl, secret } = config;
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
