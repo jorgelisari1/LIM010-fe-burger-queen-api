@@ -16,7 +16,10 @@ module.exports = {
   },
   rules: {
     "no-unused-expressions": "off",
-    "no-underscore-dangle":  "off"
+    "no-underscore-dangle":  "off",
+    "no-undef": "off",
+    "indent": "off",
+    "no-unused-vars": "off",
   },
   "overrides": [
     {

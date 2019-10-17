@@ -15,7 +15,7 @@ module.exports.postUser = async (req, resp, next) => {
     newUser._id = req.body._id;
   }
   if (req.body.roles && req.body.roles.admin) {
-    newUser.roles = { admin: true }
+    newUser.roles = { admin: true };
   }
   const userStored = await newUser.save();
 
@@ -30,12 +30,10 @@ module.exports.putUser = async (req, resp, next) => {
   try {
     if (!isAdmin(req) && req.body.roles) {
       return next(403);
-    };
-
+    }
     if (!req.body.email && !req.body.password && !isAdmin(req)) {
       return next(400)
     }
-    
     let obj = uidOrEmail(req.params.uid);
 
     const userFounded = await users.findOne(obj);
@@ -50,6 +48,6 @@ module.exports.putUser = async (req, resp, next) => {
       return resp.send({ message: 'Cambios registrados satisfactoriamente' });
     }
   } catch (e) {
-    return next(404)
+    return next(404);
   }
 };
