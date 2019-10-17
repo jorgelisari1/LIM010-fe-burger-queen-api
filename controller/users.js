@@ -25,16 +25,26 @@ module.exports.postUser = async (req, resp, next) => {
     email: userStored.email,
   });
 };
-
+const uidOrEmail = (param) => {
+  // eslint-disable-next-line no-new-object
+  const obj = new Object();
+  if (param.indexOf('@') < 0) {
+    obj._id = param;
+  } else {
+    obj.email = param;
+  }
+  return obj;
+}
 module.exports.putUser = async (req, resp, next) => {
   try {
     if (!isAdmin(req) && req.body.roles) {
       return next(403);
     }
     if (!req.body.email && !req.body.password && !isAdmin(req)) {
-      return next(400)
+      return next(400);
     }
-    let obj = uidOrEmail(req.params.uid);
+
+    const obj = uidOrEmail(req.params.uid);
 
     const userFounded = await users.findOne(obj);
     if (req.body.email) {

@@ -40,10 +40,10 @@ module.exports = (app, nextMain) => {
     user.findOne({ email: req.body.email }, (err, userStored) => {
       if (err) {
           return resp.send(err);
-      };
+      }
       if (!userStored) {
           return next(404);
-      };
+      }
       comparePassword(req.body.password, userStored).then((token) => {
           if (!token) {
               return next(401)
