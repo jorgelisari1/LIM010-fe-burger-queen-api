@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const users = require('../model/modelUsers');
-const { postUser } = require('../controller/users');
+const { postUser, getUsers } = require('../controller/users');
 
 const {
   requireAuth,
@@ -92,7 +92,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin
    */
 
-//  app.get('/users', requireAdmin, getUsers);
+ app.get('/users', requireAdmin, getUsers);
 
   /**
    * @name GET /users/:uid

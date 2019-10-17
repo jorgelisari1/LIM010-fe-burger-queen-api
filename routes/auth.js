@@ -2,10 +2,6 @@ const user = require('../model/modelUsers');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config');
-<<<<<<< HEAD
-const bcrypt = require('bcrypt');
-=======
->>>>>>> a48fafccf601733b8deb324dd37a1b7bacc01e48
 const { secret } = config;
 
 /** @module auth */
@@ -49,24 +45,12 @@ module.exports = (app, nextMain) => {
       if (!userStored) {
           return next(404);
       };
-<<<<<<< HEAD
-      if (await bcrypt.compare(password, user.password)) {
-        resp.send({ token: jwt.sign({ id: req.body._id }, secret) });
-        next();
-      } else {
-        next(401);
-      }
-
-       resp.status(200).send({ token: token });
-      
-=======
       comparePassword(req.body.password, userStored).then((token) => {
           if (!token) {
               return next(401)
           }
           resp.status(200).send({ token: token });
       })
->>>>>>> a48fafccf601733b8deb324dd37a1b7bacc01e48
   })
 });
   return nextMain();
