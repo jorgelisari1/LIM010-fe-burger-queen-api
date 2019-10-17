@@ -32,7 +32,7 @@ const initAdminUser = (app, next) => {
       userAdmin.email = adminUser.email;
       userAdmin.password = adminUser.password;
       userAdmin.roles = adminUser.roles;
-      userAdmin.save((err, userStored) => {
+      userAdmin.save((err) => {
         if (err) {
           console.log(err);
         }
@@ -110,8 +110,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.get('/users/:uid', requireAuth, (req, resp) => {
-  });
+  app.get('/users/:uid', requireAuth, getUserId);
 
   /**
    * @name POST /users
@@ -175,7 +174,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
+ app.delete('/users/:uid', requireAuth, (req, resp, next) => {
   });
 
   initAdminUser(app, next);

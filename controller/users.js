@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 const users = require("../model/modelUsers");
 const bcrypt = require("bcrypt");
 
-module.exports.getUsers = async (req, resp, next) => {
+module.exports.getUsers = async (req, resp) => {
   
   try {
     const result = await users.find().exec();
