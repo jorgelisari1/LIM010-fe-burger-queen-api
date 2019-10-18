@@ -97,5 +97,5 @@ module.exports.putUser = async (req, resp, next) => {
 };
 
 module.exports.deleteUser = async(req, resp, next) => {
-  
+
 };
