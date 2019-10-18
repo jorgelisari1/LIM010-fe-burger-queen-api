@@ -5,6 +5,7 @@ const { postUser, getUsers, getUserId, putUser, deleteUser } = require('../contr
 const {
   requireAuth,
   requireAdmin,
+  requireAdminOrUser,
 } = require('../middleware/auth');
 
 
@@ -172,7 +173,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAdmin, deleteUser);
+  app.delete('/users/:uid', requireAdminOrUser, deleteUser);
 
   initAdminUser(app, next);
 };
