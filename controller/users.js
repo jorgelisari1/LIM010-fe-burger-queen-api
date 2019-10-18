@@ -20,14 +20,11 @@ module.exports.postUser = async (req, resp, next) => {
   if (!req.body.email || !req.body.password) {
     return next(400);
   }
-  console.log('aca estoy ');
-  const userValid = await users.findOne({ email: req.body.email });
-  console.log('aca sigo user',userValid)
-  if (userValid) return next(403);
-
+  const userInvalid = await users.findOne({ email: req.body.email });
+  console.log("debug es user validate", userInvalid); //null
+  if (userInvalid) return next(403);
   let newUser = new users();
-  console.log('aca sigo newuser', newUser)
-  console.log('aca sigo req.body.email', req.body.email)
+  console.log("debug user new user", newUser); //null
   newUser.email = req.body.email;
   console.log('aca sigo newuserrrrrrrrrrr', newUser)
   newUser.password = bcrypt.hashSync(req.body.password, 10);
@@ -38,45 +35,44 @@ module.exports.postUser = async (req, resp, next) => {
   if (req.body.roles && req.body.roles.admin) {
     newUser.roles = { admin: true };
   }
-  console.log('continuamos', newUser)
-
-  
-  const userStored=  newUser.save(function(err) {
-    if (err) throw err;
- 
-    console.log('User successfully saved.');
-});
+  const userStored = await newUser.save();
   console.log('fin', userStored)
-  resp.send({
+  return resp.send({
     roles: userStored.roles,
     _id: userStored._id.toString(),
     email: userStored.email
-  });
+});
 };
 
-// module.exports.putUser = async (req, resp, next) => {
-//   try {
-//     if (!isAdmin(req) && req.body.roles) {
-//       return next(403);
-//     };
+module.exports.putUser = async (req, resp, next) => {
+  try {
+    if (!isAdmin(req) && req.body.roles) {
+      return next(403);
+    }
+    if (!req.body.email && !req.body.password && !isAdmin(req)) {
+      return next(400);
+    }
 
-//     if (!req.body.email && !req.body.password && !isAdmin(req)) {
-//       return next(400)
-//     }
+    // const obj = uidOrEmail(req.params.uid);
+
+    if (!req.body.email && !req.body.password && !isAdmin(req)) {
+      return next(400)
+    }
     
-//     let obj = uidOrEmail(req.params.uid);
+    obj = uidOrEmail(req.params.uid);
 
-//     const userFounded = await users.findOne(obj);
-//     if (req.body.email) {
-//       userFounded.email = req.body.email;
-//     }
-//     if (req.body.password) {
-//       userFounded.password = bcrypt.hashSync(req.body.password, 10);
-//     }
-//     const userSaved = await userFounded.save();
-//     if (userSaved) {
-//       return resp.send({ message: 'Cambios registrados satisfactoriamente' });
-//     }
-//   } catch (e) {
-//     return next(404)
-//   };
+    const userFounded = await users.findOne(obj);
+    if (req.body.email) {
+      userFounded.email = req.body.email;
+    }
+    if (req.body.password) {
+      userFounded.password = bcrypt.hashSync(req.body.password, 10);
+    }
+    const userSaved = await userFounded.save();
+    if (userSaved) {
+      return resp.send({ message: 'Cambios registrados satisfactoriamente' });
+    }
+  } catch (e) {
+    return next(404)
+  }
+}

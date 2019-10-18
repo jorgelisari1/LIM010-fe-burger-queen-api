@@ -158,7 +158,7 @@ describe('POST /users', () => {
     fetchAsAdmin('/users', {
       method: 'POST',
       body: {
-        email: 'test1@test.test',
+        email: 'testUser2@test.test',
         password: '12345',
         roles: { admin: false },
       },
