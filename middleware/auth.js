@@ -59,3 +59,10 @@ module.exports.requireAdmin = (req, resp, next) => (
       ? next(403)
       : next()
 );
+
+module.exports.requireAdminOrUser = (req, resp, next) => {
+  (!module.exports.isAuthenticated(req)) ?
+  next(401): (!module.exports.isAdmin(req) && !(req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid)) ?
+      next(403) :
+      next()
+};
