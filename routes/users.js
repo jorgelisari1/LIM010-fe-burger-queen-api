@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const users = require('../model/modelUsers');
-const { postUser, getUsers,getUserId, putUser } = require('../controller/users');
+const { postUser, getUsers,getUserId, putUser ,deleteUser } = require('../controller/users');
 
 const {
   requireAuth,
@@ -172,8 +172,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
- app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+ app.delete('/users/:uid', requireAuth, deleteUser);
 
   initAdminUser(app, next);
 };

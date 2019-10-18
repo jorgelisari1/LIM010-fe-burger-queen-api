@@ -23,12 +23,10 @@ module.exports = (secret) => (req, resp, next) => {
       return next(403);
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
-    console.log('id', decodedToken.uid)
+    
     users.findOne({ _id: decodedToken.uid }, (err, user) => {
       if (err) { return next(500, err) }
-      
       req.headers.user = user;
-      console.log('headers',req.headers.user);
       next();
   })
     
