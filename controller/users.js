@@ -2,6 +2,7 @@
 /* eslint-disable new-cap */
 const users = require("../model/modelUsers");
 const bcrypt = require("bcrypt");
+const { isAdmin } = require('../middleware/auth');
 
 uidOrEmail = (param) => {
   console.log('uidOrEmail', uidOrEmail);
@@ -56,8 +57,7 @@ module.exports.putUser = async (req, resp, next) => {
     console.log('aquii 1', !isAdmin(req) && req.body.roles);
     if (!isAdmin(req) && req.body.roles) {
       return next(403);
-    };
-
+    }
     console.log('aquii 2 if', !req.body.email && !req.body.password && !isAdmin(req));
     if (!req.body.email && !req.body.password && !isAdmin(req)) {
       return next(400)
