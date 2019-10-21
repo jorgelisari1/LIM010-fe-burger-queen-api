@@ -107,6 +107,17 @@ module.exports.putUser = async (req, resp, next) => {
   }
 };
 
-module.exports.deleteUser = async(req, resp, next) => {
+//Delete user
+module.exports.deleteUser = async (req, resp, next) => {
+  try {
+    const obj = uidOrEmail(req.params.uid);
+    const userdeleted = await users.findOne(obj)
+    if (!userdeleted) {
+      return next(404)
+    }
+    const userRemoved = await users.remove(obj);
+    return resp.send({ message: 'Usuario eliminado' });
 
-};
+} catch (e) {
+  return next(404)
+}};
