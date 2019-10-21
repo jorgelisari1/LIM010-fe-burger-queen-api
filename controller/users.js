@@ -23,16 +23,6 @@ module.exports.getUsers = async(req, resp, next) => {
   return resp.send(result);
 }
 
-// module.exports.getUsers = async (req, resp) => {
-  
-//   try {
-//     const result = await users.find().exec();
-//     resp.send(result);
-//   } catch (error) {
-//     resp.status(500).send(error);
-// }
-// };
-
 module.exports.getUserId = async (req, resp,next) => {
   const obj = uidOrEmail(req.params.uid);
   const userFounded = await users.findOne(obj);
@@ -80,7 +70,6 @@ module.exports.putUser = async (req, resp, next) => {
     if (!isAdmin(req) && req.body.roles) {
       return next(403);
     }
-    console.log('aquii 2 if', !req.body.email && !req.body.password && !isAdmin(req));
     if (!req.body.email && !req.body.password && !isAdmin(req)) {
       return next(400)
     }
