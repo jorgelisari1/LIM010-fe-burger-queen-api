@@ -41,6 +41,7 @@ module.exports = (app, nextMain) => {
       if (err) {
           return resp.send(err);
       }
+      //console.log('aca estamos 1',userStored);
       if (!userStored) {
           return next(404);
       }
@@ -48,6 +49,7 @@ module.exports = (app, nextMain) => {
           if (!token) {
               return next(401)
           }
+          //console.log('aca estamos 2',token);
           resp.status(200).send({ token: token });
       })
   })
