@@ -1,4 +1,5 @@
 const users = require("../model/modelUsers");
+const pagination = require('../utils/pagination');
 const bcrypt = require("bcrypt");
 
 const uidOrEmail = (param) => {
@@ -10,29 +11,39 @@ const uidOrEmail = (param) => {
   }
   return obj
 }
-
-module.exports.getUsers = async (req, resp) => {
-  
-  try {
-    const result = await users.find().exec();
-    resp.send(result);
-  } catch (error) {
-    resp.status(500).send(error);
+module.exports.getUsers = async(req, resp, next) => {
+  let limitPage = parseInt(req.query.limit) || 10;
+  let page = parseInt(req.query.page) || 1;
+  let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
+  users.find().count().then((number) => {
+      resp.set('link', pagination(protocolo, page, limitPage, number))
+  });
+  const result = await users.find().skip((page - 1) * limitPage).limit(limitPage).exec()
+  return resp.send(result);
 }
-};
+
+// module.exports.getUsers = async (req, resp) => {
+  
+//   try {
+//     const result = await users.find().exec();
+//     resp.send(result);
+//   } catch (error) {
+//     resp.status(500).send(error);
+// }
+// };
 
 module.exports.getUserId = async (req, resp,next) => {
   const obj = uidOrEmail(req.params.uid);
   const userFounded = await users.findOne(obj);
   if (!userFounded) {
-      return next(404);
+      return next(403);
   }
-  return resp.send({
+   resp.send({
       roles: userFounded.roles,
       _id: userFounded._id.toString(),
       email: userFounded.email
   })
- 
+  return next();
 };
 
 module.exports.postUser = async (req, resp, next) => {

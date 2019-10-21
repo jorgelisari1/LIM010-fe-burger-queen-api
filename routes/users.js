@@ -5,6 +5,7 @@ const { postUser, getUsers, getUserId, putUser, deleteUser } = require('../contr
 const {
   requireAuth,
   requireAdmin,
+  requireAdminOrUser
 } = require('../middleware/auth');
 
 
@@ -110,7 +111,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.get('/users/:uid', requireAuth, getUserId);
+  app.get('/users/:uid', requireAdminOrUser, getUserId);
 
   /**
    * @name POST /users
