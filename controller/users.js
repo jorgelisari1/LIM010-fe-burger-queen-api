@@ -69,7 +69,6 @@ module.exports.putUser = async (req, resp, next) => {
     if (!isAdmin(req) && req.body.roles) {
       return next(403);
     }
-    console.log('aquii 2 if', !req.body.email && !req.body.password && !isAdmin(req));
     if (!req.body.email && !req.body.password && !isAdmin(req)) {
       return next(400)
     }
