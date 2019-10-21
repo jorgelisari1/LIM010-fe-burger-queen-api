@@ -36,7 +36,7 @@ module.exports.getUserId = async (req, resp,next) => {
   const obj = uidOrEmail(req.params.uid);
   const userFounded = await users.findOne(obj);
   if (!userFounded) {
-      return next(403);
+      return next(404);
   }
    resp.send({
       roles: userFounded.roles,
@@ -116,8 +116,9 @@ module.exports.deleteUser = async (req, resp, next) => {
       return next(404)
     }
     const userRemoved = await users.remove(obj);
-    return resp.send({ message: 'Usuario eliminado' });
-
+    if (userRemoved) {
+      return resp.send({ message: 'Se eliminó usuario satisfactoriamente' });
+    }
 } catch (e) {
   return next(404)
 }};
