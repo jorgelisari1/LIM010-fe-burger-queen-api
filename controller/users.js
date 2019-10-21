@@ -48,7 +48,7 @@ module.exports.getUserId = async (req, resp,next) => {
 };
 
 module.exports.postUser = async (req, resp, next) => {
-  if (!req.body.email || !req.body.password) {
+  if (!req.body.email || !req.body.password || !req.body.email.match(/[\d\w]+@[\d\w]+/i) || req.body.password.length < 3) {
     return next(400);
   }
   const userInvalid = await users.findOne({ email: req.body.email });
