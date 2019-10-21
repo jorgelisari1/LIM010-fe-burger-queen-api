@@ -48,16 +48,16 @@ module.exports.getUserId = async (req, resp,next) => {
 };
 
 module.exports.postUser = async (req, resp, next) => {
+  console.log('emailiiiiiiiiiiiiiiiil'+req.body.email , 'passsworooooooooooooooooooooooooord'+req.body.password)
   if (!req.body.email || !req.body.password) {
     return next(400);
   }
   const userInvalid = await users.findOne({ email: req.body.email });
   
   if (userInvalid) return next(403);
-  let newUser = new users();
 
+  let newUser = new users();
   newUser.email = req.body.email;
-  
   newUser.password = bcrypt.hashSync(req.body.password, 10);
   
   if (req.body._id) {
