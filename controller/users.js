@@ -1,6 +1,7 @@
 const users = require("../model/modelUsers");
 const pagination = require('../utils/pagination');
 const bcrypt = require("bcrypt");
+const { isAdmin } = require('../middleware/auth');
 
 const uidOrEmail = (param) => {
   let obj = new Object();
@@ -79,12 +80,7 @@ module.exports.putUser = async (req, resp, next) => {
     if (!isAdmin(req) && req.body.roles) {
       return next(403);
     }
-    if (!req.body.email && !req.body.password && !isAdmin(req)) {
-      return next(400);
-    }
-
-    // const obj = uidOrEmail(req.params.uid);
-
+    console.log('aquii 2 if', !req.body.email && !req.body.password && !isAdmin(req));
     if (!req.body.email && !req.body.password && !isAdmin(req)) {
       return next(400)
     }
