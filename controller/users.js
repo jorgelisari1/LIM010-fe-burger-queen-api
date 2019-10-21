@@ -80,6 +80,7 @@ module.exports.putUser = async (req, resp, next) => {
   }
 };
 
+//Delete user
 module.exports.deleteUser = async (req, resp, next) => {
   try {
     const obj = uidOrEmail(req.params.uid);
@@ -88,7 +89,7 @@ module.exports.deleteUser = async (req, resp, next) => {
       return next(404)
     }
     const userRemoved = await users.remove(obj);
-    return resp.send({ message: 'Se borro satisfactoriamente!' });
+    return resp.send({ message: 'Usuario eliminado' });
 
   } catch (e) {
     return next(404)
