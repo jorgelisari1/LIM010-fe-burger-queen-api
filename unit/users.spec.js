@@ -21,21 +21,21 @@ beforeEach(async() => {
     });
 });
 
-let requestOfPostUsers = {
+let requestPostUsers = {
     headers: {
         authorization: '',
     },
     body: {
         _id: '5d4916541d4f9a3b2dcac66d',
-        email: 'marjorie@labo.la',
+        email: 'jesseliz@prueba.pe',
         password: '123456'
     },
 };
 
 const responseObjectOfUser = {
     roles: { admin: false },
-    _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
-    email: 'marjorie@labo.la',
+    _id: '5d4916541d4f9a3b2dcac66d',
+    email: 'jesseliz@prueba.pe',
 };
 const emptyRequest = {
     headers: {
@@ -46,7 +46,7 @@ const emptyRequest = {
         password: '1234567'
     },
 };
-const emptyRequest2 = {
+const allEmptyRequest = {
     headers: {
         authorization: '',
     },
@@ -57,8 +57,8 @@ const emptyRequest2 = {
 };
 const responseObjectOfNewAdmin = {
     roles: { admin: true },
-    _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
-    email: 'marjorie@labo.la',
+    _id: '5d4916541d4f9a3b2dcac66d', 
+    email: 'jesseliz@prueba.pe',
 };
 
 const requestOfPostUsersDuplicated = {
@@ -66,10 +66,11 @@ const requestOfPostUsersDuplicated = {
         authorization: '',
     },
     body: {
-        email: 'marjorie@labo.la',
+        email: 'jesseliz@prueba.pe',
         password: 'contraseña'
     },
 }
+// POST Method Test
 describe('POST/ users:uid', () => {
     const resp = {
         send: jest.fn(json => json),
@@ -78,23 +79,22 @@ describe('POST/ users:uid', () => {
     const next = jest.fn(json => json);
 
     it('Debería crear un nuevo usuario', async() => {
-        await postUser(requestOfPostUsers, resp, next);
+        await postUser(requestPostUsers, resp, next);
         expect(resp.send.mock.results[0].value).toEqual(responseObjectOfUser);
-        //expect(userSend).toBe(responseObjectOfUser);
     });
     it('El administrador debería poder crear a otro administrador', async() => {
-        requestOfPostUsers.body.roles = { admin: true }
-        const newAdmin = await postUser(requestOfPostUsers, resp, next);
+        requestPostUsers.body.roles = { admin: true }
+        const newAdmin = await postUser(requestPostUsers, resp, next);
         resp.send.mockReturnValue(newAdmin)
         expect(resp.send()).toEqual(responseObjectOfNewAdmin);
     })
     it('Debería retornar un error 400 si no existe email o password', async() => {
         await postUser(emptyRequest, resp, next);
-        await postUser(emptyRequest2, resp, next);
+        await postUser(allEmptyRequest, resp, next);
         expect(next.mock.calls[0][0]).toBe(400);
         expect(next.mock.calls[1][0]).toBe(400);
     })
-    it('Debería retornar un error 403 si ya existe un usuario con ese email', async() => {
+    it('Debería retornar un error 403 si ya existe un usuario registrado con el mismo email', async() => {
         await postUser(requestOfPostUsersDuplicated, resp, next);
         await postUser(requestOfPostUsersDuplicated, resp, next);
         expect(next.mock.calls[2][0]).toBe(403);
@@ -122,8 +122,8 @@ const requestOfPostUsers2 = {
         authorization: '',
     },
     body: {
-        email: 'mayte@labo.la',
-        password: 'samaniego'
+        email: 'jess@prueba.pe',
+        password: 'passPrueba'
     },
 };
 //cuenta llamadaaas
@@ -154,7 +154,7 @@ const requestOfGetUsersByEmail = {
         authorization: ''
     },
     params: {
-        uid: 'maytesi@labo.la'
+        uid: 'jess@prueba.post'
     }
 };
 const requestOfPostUsers3 = {
@@ -162,13 +162,13 @@ const requestOfPostUsers3 = {
         authorization: '',
     },
     body: {
-        email: 'maytesi@labo.la',
+        email: 'jess@prueba.post',
         password: 'inga123'
     },
 };
 const responseObjectOfUser3 = {
     roles: { admin: false },
-    email: 'maytesi@labo.la',
+    email: 'jess@prueba.post',
 };
 
 const requestOfGetUsersById = {
@@ -218,7 +218,7 @@ const requestOfPostUsersFromPut = {
         authorization: '',
     },
     body: {
-        email: 'marjorie2@labo.la',
+        email: 'arianna@gmail.com',
         password: '123456'
     },
 };
@@ -227,14 +227,14 @@ const emptyOfPostUsersFromPut = {
         authorization: '',
         user: {
             roles: { admin: false },
-            email: 'marjorie2@labo.la',
+            email: 'arianna@gmail.com',
         }
     },
     body: {
         email: ''
     },
     params: {
-        uid: 'marjorie2@labo.la'
+        uid: 'arianna@gmail.com'
     }
 };
 const requestOfPutUsersByEmail = {
@@ -242,14 +242,14 @@ const requestOfPutUsersByEmail = {
         authorization: '',
         user: {
             roles: { admin: false },
-            email: 'marjorie2@labo.la',
+            email: 'arianna@gmail.com',
         }
     },
     body: {
         email: 'marjo1@labo.la',
     },
     params: {
-        uid: 'marjorie2@labo.la'
+        uid: 'arianna@gmail.com'
     }
 };
 const requestOfPutModifyRoles = {
@@ -257,7 +257,7 @@ const requestOfPutModifyRoles = {
         authorization: '',
         user: {
             roles: { admin: false },
-            email: 'marjorie2@labo.la',
+            email: 'arianna@gmail.com',
         }
     },
     body: {
@@ -266,7 +266,7 @@ const requestOfPutModifyRoles = {
         }
     },
     params: {
-        uid: 'marjorie2@labo.la'
+        uid: 'arianna@gmail.com'
     }
 };
 describe('PUT/ users:uid', () => {
@@ -285,7 +285,7 @@ describe('PUT/ users:uid', () => {
                 user: {
                     roles: { admin: false },
                     _id: userFromTestPut._id.toString(), //5d4916541d4f9a3b2dcac66d,
-                    email: 'marjorie2@labo.la',
+                    email: 'arianna@gmail.com',
                 }
             },
             body: {
