@@ -13,8 +13,8 @@ const uidOrEmail = (param) => {
   return obj
 }
 module.exports.getUsers = async(req, resp, next) => {
-  let limitPage = parseInt(req.query.limit) || 10;
-  let page = parseInt(req.query.page) || 1;
+  let limitPage = parseInt(req.query.limit);
+  let page = parseInt(req.query.page);
   let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
   users.find().count().then((number) => {
       resp.set('link', pagination(protocolo, page, limitPage, number))
@@ -29,12 +29,11 @@ module.exports.getUserId = async (req, resp,next) => {
   if (!userFounded) {
       return next(404);
   }
-   resp.send({
-      roles: userFounded.roles,
-      _id: userFounded._id.toString(),
-      email: userFounded.email
-  })
-  return next();
+  return resp.send({
+    roles: userFounded.roles,
+    _id: userFounded._id.toString(),
+    email: userFounded.email
+})
 };
 
 module.exports.postUser = async (req, resp, next) => {
