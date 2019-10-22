@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
+
 'use strict'
-// eslint-disable-next-line linebreak-style
-const mongoClient = require('mongodb').MongoClient;
 // Cargamos el módulo de mongoose
 var mongoose = require('mongoose');
 // Usaremos los esquemas
