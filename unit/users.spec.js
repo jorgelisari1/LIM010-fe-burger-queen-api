@@ -82,10 +82,10 @@ describe('POST/ users:uid', () => {
 
     const next = jest.fn(json => json);
 
-    it('Debería crear un nuevo usuario', async(done) => {
+    it('Debería crear un nuevo usuario', async() => {
         await postUser(requestPostUsers, resp, next);
         expect(resp.send.mock.results[0].value).toEqual(responseObjectOfUser);
-        done();
+       
     });
     it('El administrador debería poder crear a otro administrador', async(done) => {
         requestPostUsers.body.roles = { admin: true }
@@ -107,6 +107,66 @@ describe('POST/ users:uid', () => {
         expect(next.mock.calls[2][0]).toBe(403);
         done();
     })
-
 });
 
+const requestOfGetUsersByEmail = {
+    'headers': {
+        authorization: ''
+    },
+    params: {
+        uid: 'jess@prueba.post'
+    }
+};
+const requestOfPostUsers3 = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: 'jess@prueba.post',
+        password: 'inga123'
+    },
+};
+const responseObjectOfUser3 = {
+    roles: { admin: false },
+    email: 'jess@prueba.post',
+};
+
+const requestOfGetUsersById = {
+    'headers': {
+        authorization: ''
+    },
+    params: {
+
+    }
+};
+describe('GET/ users:uid', () => {
+    const resp = {
+        send: jest.fn(json => json),
+    };
+
+    const next = jest.fn(json => json);
+
+
+    it('Debería retornar el usuario llamado por ID', async() => {
+        const user0 = await postUser(requestOfPostUsers3, resp, next);
+        requestOfGetUsersById.params.uid = user0._id.toString();
+        responseObjectOfUser3._id = user0._id;
+        const getUsersTest = await getUserId(requestOfGetUsersById, resp, next);
+        resp.send.mockReturnValue(getUsersTest)
+        expect(resp.send()).toEqual(responseObjectOfUser3);
+    });
+
+    it('Debería retornar el usuario llamado por Email', async() => {
+        const user = await postUser(requestOfPostUsers3, resp, next);
+        responseObjectOfUser3._id = user._id;
+        const functTest = await getUserId(requestOfGetUsersByEmail, resp, next);
+        resp.send.mockReturnValue(functTest)
+        expect(resp.send()).toEqual(responseObjectOfUser3);
+    });
+    it('Debería retornar un error 404 si se ingresa un parametro uid invalido', async() => {
+        const user = await postUser(requestOfPostUsers3, resp, next);
+        requestOfGetUsersById.params.uid = '5d4916541d4f9a3b2dcac66d';
+        await getUserId(requestOfGetUsersById, resp, next);
+        expect(next.mock.calls[0][0]).toBe(404);
+    });
+});
