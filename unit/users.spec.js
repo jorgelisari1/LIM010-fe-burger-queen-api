@@ -7,10 +7,6 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
 let port;
 beforeEach(async() => {
-    if (mongoServer) {
-        await mongoose.disconnect();
-        await mongoServer.stop();
-    }
     // eslint-disable-next-line require-atomic-updates
     mongoServer = new MongoMemoryServer();
     port = await mongoServer.getPort();
@@ -19,6 +15,15 @@ beforeEach(async() => {
         if (err) console.error(err);
     });
 });
+afterEach(async (done) => {
+    // Closing the DB connection allows Jest to exit successfully.
+    if (mongoServer) {
+        await mongoose.disconnect();
+        await mongoServer.stop();
+    }
+    await mongoose.connection.close()
+    done();
+  });
 
 let requestPostUsers = {
     headers: {
@@ -103,10 +108,5 @@ describe('POST/ users:uid', () => {
         done();
     })
 
-    afterAll(async (done) => {
-        // Closing the DB connection allows Jest to exit successfully.
-        await mongoose.connection.close()
-        done();
-      });
 });
 
