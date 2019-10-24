@@ -109,6 +109,49 @@ describe('POST/ users:uid', () => {
     })
 });
 
+const requestOfGetUsers = {
+    'headers': {
+        authorization: ''
+    },
+    'query': {
+        limit: 10,
+        page: 1,
+    },
+    'protocol': 'http',
+    'get': jest.fn(res => `localhost:${port}`),
+    'path': '/users',
+};
+const requestOfPostUsers2 = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: 'mayte@labo.la',
+        password: 'samaniego'
+    },
+};
+//cuenta llamadaaas
+let responseOfGetUsers = [];
+describe('GET/ users', () => {
+    const res = {
+        send: jest.fn(json => json),
+        set: jest.fn(json => json)
+    };
+
+    const next = jest.fn(json => json);
+
+
+    it('Debería retornar el numero de usuarios creados', async() => {
+        const userSend2 = await postUser(requestOfPostUsers2, res, next);
+        const userSend = await postUser(requestPostUsers, res, next);
+        responseOfGetUsers.push(userSend2, userSend);
+        const users = await getUsers(requestOfGetUsers, res, next);
+        expect(users).toHaveLength(responseOfGetUsers.length);
+        expect(res.send.mock.calls[2].length).toBe(1)
+    });
+});
+
+
 const requestOfGetUsersByEmail = {
     'headers': {
         authorization: ''
@@ -143,9 +186,7 @@ describe('GET/ users:uid', () => {
     const resp = {
         send: jest.fn(json => json),
     };
-
     const next = jest.fn(json => json);
-
 
     it('Debería retornar el usuario llamado por ID', async() => {
         const user0 = await postUser(requestOfPostUsers3, resp, next);
@@ -169,4 +210,221 @@ describe('GET/ users:uid', () => {
         await getUserId(requestOfGetUsersById, resp, next);
         expect(next.mock.calls[0][0]).toBe(404);
     });
+});
+
+// PUT method
+
+const requestOfPostUsersFromPut = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: 'arianna@gmail.com',
+        password: '123456'
+    },
+};
+const emptyOfPostUsersFromPut = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            email: 'arianna@gmail.com',
+        }
+    },
+    body: {
+        email: ''
+    },
+    params: {
+        uid: 'arianna@gmail.com'
+    }
+};
+const requestOfPutUsersByEmail = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            email: 'arianna@gmail.com',
+        }
+    },
+    body: {
+        email: 'marjo1@labo.la',
+    },
+    params: {
+        uid: 'arianna@gmail.com'
+    }
+};
+const requestOfPutModifyRoles = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            email: 'arianna@gmail.com',
+        }
+    },
+    body: {
+        roles: {
+            admin: true,
+        }
+    },
+    params: {
+        uid: 'arianna@gmail.com'
+    }
+};
+
+describe('PUT/ users:uid', () => {
+    const response = {
+        send: jest.fn(json => json),
+    };
+
+    const next2 = jest.fn(json => json);
+
+
+    it('Debería editar usuario llamado por ID', async() => {
+        const userFromTestPut = await postUser(requestOfPostUsersFromPut, response, next2);
+        const requestOfPutUsersById = {
+            'headers': {
+                authorization: '',
+                user: {
+                    roles: { admin: false },
+                    _id: userFromTestPut._id.toString(), //5d4916541d4f9a3b2dcac66d,
+                    email: 'arianna@gmail.com',
+                }
+            },
+            body: {
+                email: 'marjo@labo.la',
+                password: 'abcdefg'
+            },
+            params: {
+                uid: userFromTestPut._id.toString()
+            }
+        };
+        const userChange = await putUser(requestOfPutUsersById, response, next2);
+        response.send.mockReturnValue(userChange)
+        expect(response.send()).toEqual({ message: 'Cambios registrados satisfactoriamente' });
+    });
+
+    it('Debería retornar el usuario llamado por Email', async() => {
+        await postUser(requestOfPostUsersFromPut, response, next2);
+        const userChange2 = await putUser(requestOfPutUsersByEmail, response, next2);
+        response.send.mockReturnValue(userChange2);
+        expect(response.send()).toEqual({ message: 'Cambios registrados satisfactoriamente' });
+    });
+
+    it('Debería retornar un error 404 si se ingresa un parametro uid inválido', async() => {
+        await postUser(requestOfPostUsersFromPut, response, next2);
+        requestOfPutUsersByEmail.params.uid = '5d49896541d4f9a3bl2dcuc66d';
+        await putUser(requestOfPutUsersByEmail, response, next2);
+        expect(next2.mock.calls[0][0]).toBe(404);
+    });
+    it('Debería retornar un error 403 si un usuario quiere modificar sus roles y no es administrador', async() => {
+        await postUser(requestOfPostUsersFromPut, response, next2);
+        await putUser(requestOfPutModifyRoles, response, next2);
+        expect(next2.mock.calls[1][0]).toBe(403);
+    });
+    it('Debería retornar un error 400 si ingresa un email o password vacío', async() => {
+        await postUser(requestOfPostUsersFromPut, response, next2);
+        await putUser(emptyOfPostUsersFromPut, response, next2);
+        expect(next2.mock.calls[2][0]).toBe(400);
+    });
+
+
+});
+
+const requestDeleteUsersByEmail = {
+
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            _id: 'xxxxxxxxxxxxxxxxxxxx', //5d4916541d4f9a3b2dcac66d,
+            email: 'delete@labo.la',
+        }
+    },
+    params: {
+        uid: 'delete@labo.la'
+    }
+};
+const requestAdminToDelete = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: true },
+            _id: 'xxxxxxxxxxxxxxxxxxxx', //5d4916541d4f9a3b2dcac66d,
+            email: 'delete@labo.la',
+        }
+    },
+    params: {
+        uid: 'delete@labo.la'
+    }
+};
+let requestOfPostUsersFromDelete = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: 'delete@labo.la',
+        password: '123456',
+    },
+};
+const requestAdminToDeleteAuto = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: true },
+            _id: '12345678910111213141',
+            email: 'admin@gmail',
+        }
+    },
+    params: {
+        uid: 'admin@gmail',
+    }
+};
+
+describe('DELETE/ users:uid', () => {
+    const respon = {
+        send: jest.fn(json => json),
+    };
+
+    const next = jest.fn(json => json);
+
+    it('Debería elimiar un usuario creado por uid', async() => {
+        const userSaved = await postUser(requestOfPostUsersFromDelete, respon, next);
+        const requestDeleteUsersById = {
+            'headers': {
+                authorization: '',
+                user: {
+                    roles: { admin: false },
+                    _id: 'xxxxxxxxxxxxxxxxxx',
+                    email: 'admin@labo.la',
+                }
+            },
+            params: {
+                uid: userSaved._id.toString(),
+            }
+        };
+        const userDeleted = await deleteUser(requestDeleteUsersById, respon, next);
+        respon.send.mockReturnValue(userDeleted);
+        expect(respon.send()).toEqual({ message: 'Se eliminó usuario satisfactoriamente' });
+    });
+    it('Debería elimiar un usuario creado por email', async() => {
+        await postUser(requestOfPostUsersFromDelete, respon, next);
+        const userDeleted2 = await deleteUser(requestAdminToDelete, respon, next);
+        respon.send.mockReturnValue(userDeleted2);
+        expect(respon.send()).toEqual({ message: 'Se eliminó usuario satisfactoriamente' });
+    });
+
+    it('Debería retornar un error 404 si se ingresa un id invalid', async() => {
+        await postUser(requestOfPostUsersFromDelete, respon, next);
+        requestDeleteUsersByEmail.params.uid = '5d3b0d0a99320e3f0ce80b96';
+        await deleteUser(requestDeleteUsersByEmail, respon, next);
+        expect(next.mock.calls[0][0]).toBe(404);
+    });
+
+    it('Debería retornar un error 404 si se ingresa un mal dato', async() => {
+        await postUser(requestOfPostUsersFromDelete, respon, next);
+        requestDeleteUsersByEmail.params.uid = 'xxxxxxxxxxxxxx';
+        await deleteUser(requestDeleteUsersByEmail, respon, next);
+        expect(next.mock.calls[1][0]).toBe(404);
+    });
+
 });
