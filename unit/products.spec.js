@@ -46,11 +46,29 @@ const requestPostProduct = {
   },
 }
   const responseObjectPostProduct = {
-    name: 'product1',
+    name: 'superCarnievichion',
     price: 1,
     type: 'hamburguesa'
 };
+const requestCreateProductError = {
+  headers: {
+      authorization: '',
+  },
+  body: {
+      name: 'pizza mia',
+      price: ''
+  },
+};
 
+const requestCreateProductError2 = {
+  headers: {
+      authorization: '',
+  },
+  body: {
+      name: '',
+      price: '28'
+  },
+};
 
 describe('POST/ product:uid', () => {
   const resp = {
@@ -64,5 +82,15 @@ describe('POST/ product:uid', () => {
      await postProduct(requestPostProduct,resp,next);
      expect(resp.send.mock.results[0].value).toMatchObject(responseObjectPostProduct)
   })
+  it('El administrador debería poder crear un nuevo producto', async() => {
+    await postProduct(requestPostProduct,resp,next);
+    expect(resp.send.mock.results[0].value).toMatchObject(responseObjectPostProduct)
+ })
+ it('Debería retornar un error 400 si no se define `name` o `price`', async() => {
+  await postProduct(requestCreateProductError, resp, next);
+  await postProduct(requestCreateProductError2, resp, next);
+  expect(next.mock.calls[0][0]).toBe(400);
+  expect(next.mock.calls[0][0]).toBe(400);
+})
   
 });
