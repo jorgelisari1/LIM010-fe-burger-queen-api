@@ -2,7 +2,7 @@ const {
   requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
-const { postProduct, getProducts, getProductById, putProduct, deleteProduct } = require('../controller/productsController')
+const { postProduct, getProducts, getProductById, putProduct, deleteProduct } = require('../controller/products')
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
