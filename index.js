@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser')
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
@@ -13,22 +14,20 @@ const  mongoose = require('mongoose');
 const app = express();
 
 const { port, dbUrl, secret } = config;
-const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-
-// console.log('bodyparser', app.use(bodyParser.json()));
 
 app.set('config', config);
 
 app.set('pkg', pkg);
 
 // parse application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-// console.log('express', app.use(express.json()));
-
+//app.use(express.urlencoded({ extended: false }));
+//app.use(express.json());
 app.use(authMiddleware(secret));
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
 // TODO: Conección a la BD en mogodb
 mongoose.connect(dbUrl)

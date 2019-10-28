@@ -189,17 +189,19 @@ describe('DELETE /products/:productid', () => {
       body: { name: 'Test', price: 10 },
     })
       .then((resp) => {
+        console.log('entramossssssss');
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then(
+      .then( console.log('e2222222222222'),
         ({ _id }) => fetchAsAdmin(`/products/${_id}`, { method: 'DELETE' })
           .then((resp) => ({ resp, _id })),
       )
       .then(({ resp, _id }) => {
+         console.log('3333333');
         expect(resp.status).toBe(200);
         return fetchAsAdmin(`/products/${_id}`);
       })
-      .then((resp) => expect(resp.status).toBe(404))
+      .then( console.log('555555555555555'),(resp) => expect(resp.status).toBe(404))
   ));
 });

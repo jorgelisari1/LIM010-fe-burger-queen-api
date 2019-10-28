@@ -2,7 +2,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const nodeFetch = require('node-fetch');
 const kill = require('tree-kill');
-
+const { MongoMemoryServer } = require('mongodb-memory-server');
 const config = require('../config');
 
 const port = process.env.PORT || 8888;
@@ -110,6 +110,10 @@ module.exports = () => new Promise((resolve, reject) => {
   }
 
   // TODO: Configurar DB de tests
+  const mongod = new MongoMemoryServer();
+  mongod.getConnectionString().then((mongoUrl) => {
+    process.env.DB_URL = mongoUrl;
+    console.info('\nIn-memory mongo server ', mongoUrl);
 
   console.info('Staring local server...');
   const child = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['start', process.env.PORT || 8888], {
@@ -145,7 +149,7 @@ module.exports = () => new Promise((resolve, reject) => {
       kill(child.pid, 'SIGKILL', () => reject(err));
     });
 });
-
+});
 // Export globals - ugly... :-(
 global.__e2e = __e2e;
 
