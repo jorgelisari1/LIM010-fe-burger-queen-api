@@ -72,16 +72,27 @@ module.exports.putProduct = async (req, resp, next) => {
   }
   };
 
-  module.exports.deleteProduct = async (req, resp, next) => {
+  /* module.exports.deleteProduct = async (req, resp, next) => {
     try {
         const productDelete = await products.findByIdAndRemove(req.params.productId);
         if( productDelete){
             return resp.send({
-                message: 'Se borro satisfactoriamente!',
+                message: 'El producto se elimino satisfactoriamente!',
             });
         }
         
     } catch (e) {
         return next(404)        
     }
-  };
+  }; */
+
+  module.exports.deleteProduct = async(req, resp, next) => {
+    try {
+        const productDelete = await products.findByIdAndRemove(req.params.productId);
+        return resp.send({
+            message: 'Se borro satisfactoriamente!',
+        });
+    } catch (e) {
+        return next(404)        
+    }
+}
