@@ -68,23 +68,10 @@ module.exports.putProduct = async (req, resp, next) => {
     const productStored = await productById.save();
     return resp.send(productStored);
 } catch (e) {
-    return next(404)
+    if (e.kind === 'ObjectId') return next(404)
+    return next(400)
   }
   };
-
-  /* module.exports.deleteProduct = async (req, resp, next) => {
-    try {
-        const productDelete = await products.findByIdAndRemove(req.params.productId);
-        if( productDelete){
-            return resp.send({
-                message: 'El producto se elimino satisfactoriamente!',
-            });
-        }
-        
-    } catch (e) {
-        return next(404)        
-    }
-  }; */
 
   module.exports.deleteProduct = async(req, resp, next) => {
     try {

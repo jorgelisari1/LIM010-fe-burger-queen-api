@@ -35,7 +35,7 @@ describe('POST /products', () => {
         expect(typeof json.name).toBe('string');
         expect(typeof json.price).toBe('number');
       })
-  ));
+  ), 40000);
 });
 
 
@@ -54,7 +54,7 @@ describe('GET /products', () => {
           expect(typeof product.price).toBe('number');
         });
       })
-  ));
+  ), 40000);
 });
 
 describe('GET /products/:productid', () => {
@@ -87,7 +87,7 @@ describe('GET /products/:productid', () => {
       .then(({ json, product }) => {
         expect(json).toEqual(product);
       })
-  ));
+  ), 40000);
 });
 
 

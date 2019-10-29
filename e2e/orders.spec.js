@@ -4,6 +4,8 @@ const {
   fetchAsAdmin,
 } = process;
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
+
 
 describe('POST /orders', () => {
   it('should fail with 401 when no auth', () => (
@@ -159,7 +161,7 @@ describe('GET /orders', () => {
         Promise.all([
           fetchAsTestUser('/orders', {
             method: 'POST',
-            body: { products: [{ productId: product._id, qty: 50 }], userId: user._id },
+            body: { products: [{ productId: product._id, qty: 50 },{productId: product._id, qty: 2}], userId: user._id },
           }),
           fetchAsAdmin('/orders', {
             method: 'POST',
@@ -265,7 +267,7 @@ describe('GET /orders/:orderid', () => {
         expect(json.products[0].product.name).toBe('Test');
         expect(json.products[0].product.price).toBe(10);
       })
-  ));
+  ), 40000);
 });
 
 
