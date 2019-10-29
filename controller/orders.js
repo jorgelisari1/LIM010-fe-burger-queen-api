@@ -1,27 +1,36 @@
+/* eslint-disable require-atomic-updates */
 const order = require('../model/modelOrders')
 const products = require('../model/modelProducts');
-const pagination = require('../utils/pagination');
+// const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
 
-module.exports.getOrders = async(req, resp, next) => {
-    let limitPage = parseInt(req.query.limit) || 10;
-    let page = parseInt(req.query.page) || 1;
-    let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-    const number = await order.find().countDocuments();
-    resp.set('link', pagination(protocolo, page, limitPage, number))
-    const orderFound = await order.find().skip((page - 1) * limitPage).limit(limitPage).exec();
-    if (!orderFound) return next(400)
-    return resp.send(orderFound);
-   
-};
-
-module.exports.getOrdersById = async(req, resp, next) => {
-    try {
-        const orderFound = await order.findOne({ _id: req.params.orderid });
-        if (!orderFound) return next(404);
-        return resp.send(orderFound);
-    } catch (e) {
-        return next(404)
+module.exports.postOrders = async (req, resp, next) => {
+    if (!req.body.products || req.body.products.length === 0) {
+        //no se indica `userId` o se intenta crear una orden sin productos
+        return next(400);
     }
+    let newOrder = new order();
+    newOrder.dateEntry = Date.now();
+    newOrder.userId = req.headers.user._id;
+    newOrder.client = req.body.client;
+    const arrProducts = await products.find({ _id: { $in: req.body.products.map(pId => mongodb.ObjectId(pId.product)) } })
+    if (arrProducts.length !== req.body.products.length) {
+        req.body.products = req.body.products.filter((x) => {
+            //filtra todos los productos que sean diferentes de null
+            return x !== null || undefined;
+        })
+    }
+    const allProducts = req.body.products.map((currentProduct, index) => ({
+        product: {
+            _id: currentProduct.product,
+            name: arrProducts[index].name,
+            price: arrProducts[index].price,
+        },
+        qty: currentProduct.qty
+    }));
+
+    newOrder.products = allProducts;
+    const orderStored = await newOrder.save();
+    return resp.send(orderStored)
 };
 
