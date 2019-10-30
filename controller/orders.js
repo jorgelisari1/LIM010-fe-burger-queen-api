@@ -2,7 +2,7 @@
 const order = require('../model/modelOrders')
 const products = require('../model/modelProducts');
 // const pagination = require('../utils/pagination');
-const mongodb = require('mongodb');
+//const mongodb = require('mongodb');
 
 module.exports.postOrders = async (req, resp, next) => {
     if (!req.body.products || req.body.products.length === 0) {
@@ -13,24 +13,25 @@ module.exports.postOrders = async (req, resp, next) => {
     newOrder.dateEntry = Date.now();
     newOrder.userId = req.headers.user._id;
     newOrder.client = req.body.client;
-    const arrProducts = await products.find({ _id: { $in: req.body.products.map(pId => mongodb.ObjectId(pId.product)) } })
-    if (arrProducts.length !== req.body.products.length) {
-        req.body.products = req.body.products.filter((x) => {
-            //filtra todos los productos que sean diferentes de null
-            return x !== null || undefined;
-        })
+    let arr =[];
+    req.body.products.forEach(element => {
+        //aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii no me trae lo que quiero 
+            const productById = products.findOne({_id: element.productId});
+            console.log(productById);
+            if (productById) {
+                arr.push(element);
+            }
     }
-    const allProducts = req.body.products.map((currentProduct, index) => ({
-        product: {
-            _id: currentProduct.product,
-            name: arrProducts[index].name,
-            price: arrProducts[index].price,
-        },
-        qty: currentProduct.qty
-    }));
-
-    newOrder.products = allProducts;
+    )
+    console.log(arr)
+    newOrder.products = arr;
     const orderStored = await newOrder.save();
     return resp.send(orderStored)
+    // const allProducts = req.body.products.map((currentProduct) => ({
+    //     product: arrProducts.find(p._id.equals(currentProduct._id)),
+    //     qty: currentProduct.qty
+    // }));
+
+    
 };
 
