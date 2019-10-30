@@ -1,8 +1,7 @@
 /* eslint-disable require-atomic-updates */
-const order = require('../model/modelOrders')
 const products = require('../model/modelProducts');
+const order = require('../model/modelOrders');
 // const pagination = require('../utils/pagination');
-//const mongodb = require('mongodb');
 
 module.exports.postOrders = async (req, resp, next) => {
     if (!req.body.products || req.body.products.length === 0) {

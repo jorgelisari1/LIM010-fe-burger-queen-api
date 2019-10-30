@@ -16,6 +16,7 @@ module.exports.getProducts = async(req, resp, next) => {
 module.exports.getProductById = async(req, resp, next) => {    
     try {
         const productById = await products.findOne({ _id: req.params.productId })
+        console.log(req.params.productId);
         if (!productById) {
             return next(404)
         } 
