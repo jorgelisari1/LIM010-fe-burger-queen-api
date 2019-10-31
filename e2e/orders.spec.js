@@ -54,8 +54,8 @@ describe('POST /orders', () => {
         expect(typeof json.dateEntry).toBe('string');
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
-        //expect(json.products[0].product.name).toBe('Test');
-        //expect(json.products[0].product.price).toBe(10);
+        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.price).toBe(10);
       })
   ));
 
@@ -85,8 +85,8 @@ describe('POST /orders', () => {
         expect(typeof json.dateEntry).toBe('string');
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
-       // expect(json.products[0].product.name).toBe('Test');
-       // expect(json.products[0].product.price).toBe(25);
+        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.price).toBe(25);
       })
   ));
 });
