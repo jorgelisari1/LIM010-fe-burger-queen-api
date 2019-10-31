@@ -1,5 +1,6 @@
-const { getUsers, getUserId, postUser, putUser, deleteUser } = require('../controller/users');
+const { getUsers, getUserUid, postUser, putUser, deleteUser } = require('../controllers/users');
 const mongoose = require('mongoose')
+    //const Users = require('../models/modelUsers');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
@@ -7,7 +8,10 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 let mongoServer;
 let port;
 beforeEach(async() => {
-    // eslint-disable-next-line require-atomic-updates
+    if (mongoServer) {
+        await mongoose.disconnect();
+        await mongoServer.stop();
+    }
     mongoServer = new MongoMemoryServer();
     port = await mongoServer.getPort();
     const mongoUri = await mongoServer.getConnectionString();
@@ -15,31 +19,22 @@ beforeEach(async() => {
         if (err) console.error(err);
     });
 });
-afterEach(async (done) => {
-    // Closing the DB connection allows Jest to exit successfully.
-    if (mongoServer) {
-        await mongoose.disconnect();
-        await mongoServer.stop();
-    }
-    await mongoose.connection.close()
-    done();
-  });
 
-let requestPostUsers = {
+let requestOfPostUsers = {
     headers: {
         authorization: '',
     },
     body: {
         _id: '5d4916541d4f9a3b2dcac66d',
-        email: 'jesseliz@prueba.pe',
+        email: 'jess@gmail.com',
         password: '123456'
     },
 };
 
 const responseObjectOfUser = {
     roles: { admin: false },
-    _id: '5d4916541d4f9a3b2dcac66d',
-    email: 'jesseliz@prueba.pe',
+    _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+    email: 'jess@gmail.com',
 };
 const emptyRequest = {
     headers: {
@@ -50,7 +45,7 @@ const emptyRequest = {
         password: '1234567'
     },
 };
-const allEmptyRequest = {
+const emptyRequest2 = {
     headers: {
         authorization: '',
     },
@@ -61,8 +56,8 @@ const allEmptyRequest = {
 };
 const responseObjectOfNewAdmin = {
     roles: { admin: true },
-    _id: '5d4916541d4f9a3b2dcac66d', 
-    email: 'jesseliz@prueba.pe',
+    _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+    email: 'jess@gmail.com',
 };
 
 const requestOfPostUsersDuplicated = {
@@ -70,11 +65,10 @@ const requestOfPostUsersDuplicated = {
         authorization: '',
     },
     body: {
-        email: 'jesseliz@prueba.pe',
+        email: 'jess@gmail.com',
         password: 'contraseña'
     },
 }
-// POST Method Test
 describe('POST/ users:uid', () => {
     const resp = {
         send: jest.fn(json => json),
@@ -83,31 +77,31 @@ describe('POST/ users:uid', () => {
     const next = jest.fn(json => json);
 
     it('Debería crear un nuevo usuario', async() => {
-        await postUser(requestPostUsers, resp, next);
+        await postUser(requestOfPostUsers, resp, next);
         expect(resp.send.mock.results[0].value).toEqual(responseObjectOfUser);
-       
+        //expect(userSend).toBe(responseObjectOfUser);
     });
-    it('El administrador debería poder crear a otro administrador', async(done) => {
-        requestPostUsers.body.roles = { admin: true }
-        const newAdmin = await postUser(requestPostUsers, resp, next);
+    it('El administrador debería poder crear a otro administrador', async() => {
+        requestOfPostUsers.body.roles = { admin: true }
+        const newAdmin = await postUser(requestOfPostUsers, resp, next);
         resp.send.mockReturnValue(newAdmin)
         expect(resp.send()).toEqual(responseObjectOfNewAdmin);
-        done();
     })
-    it('Debería retornar un error 400 si no existe email o password', async(done) => {
+    it('Debería retornar un error 400 si no existe email o password', async() => {
         await postUser(emptyRequest, resp, next);
-        await postUser(allEmptyRequest, resp, next);
+        await postUser(emptyRequest2, resp, next);
         expect(next.mock.calls[0][0]).toBe(400);
         expect(next.mock.calls[1][0]).toBe(400);
-        done();
     })
-    it('Debería retornar un error 403 si ya existe un usuario registrado con el mismo email', async(done) => {
+    it('Debería retornar un error 403 si ya existe un usuario con ese email', async() => {
         await postUser(requestOfPostUsersDuplicated, resp, next);
         await postUser(requestOfPostUsersDuplicated, resp, next);
         expect(next.mock.calls[2][0]).toBe(403);
-        done();
+
     })
 });
+/* const mockPostUSer = mock.fn(res= postUser(requestOfPostUsers, resp, next))
+ */
 
 const requestOfGetUsers = {
     'headers': {
@@ -126,7 +120,7 @@ const requestOfPostUsers2 = {
         authorization: '',
     },
     body: {
-        email: 'mayte@labo.la',
+        email: 'ariana@gmail.com',
         password: 'samaniego'
     },
 };
@@ -143,7 +137,7 @@ describe('GET/ users', () => {
 
     it('Debería retornar el numero de usuarios creados', async() => {
         const userSend2 = await postUser(requestOfPostUsers2, res, next);
-        const userSend = await postUser(requestPostUsers, res, next);
+        const userSend = await postUser(requestOfPostUsers, res, next);
         responseOfGetUsers.push(userSend2, userSend);
         const users = await getUsers(requestOfGetUsers, res, next);
         expect(users).toHaveLength(responseOfGetUsers.length);
@@ -157,7 +151,7 @@ const requestOfGetUsersByEmail = {
         authorization: ''
     },
     params: {
-        uid: 'jess@prueba.post'
+        uid: 'ariana@gmail.com'
     }
 };
 const requestOfPostUsers3 = {
@@ -165,13 +159,13 @@ const requestOfPostUsers3 = {
         authorization: '',
     },
     body: {
-        email: 'jess@prueba.post',
-        password: 'inga123'
+        email: 'ariana@gmail.com',
+        password: 'pass123'
     },
 };
 const responseObjectOfUser3 = {
     roles: { admin: false },
-    email: 'jess@prueba.post',
+    email: 'ariana@gmail.com',
 };
 
 const requestOfGetUsersById = {
@@ -186,13 +180,15 @@ describe('GET/ users:uid', () => {
     const resp = {
         send: jest.fn(json => json),
     };
+
     const next = jest.fn(json => json);
+
 
     it('Debería retornar el usuario llamado por ID', async() => {
         const user0 = await postUser(requestOfPostUsers3, resp, next);
         requestOfGetUsersById.params.uid = user0._id.toString();
         responseObjectOfUser3._id = user0._id;
-        const getUsersTest = await getUserId(requestOfGetUsersById, resp, next);
+        const getUsersTest = await getUserUid(requestOfGetUsersById, resp, next);
         resp.send.mockReturnValue(getUsersTest)
         expect(resp.send()).toEqual(responseObjectOfUser3);
     });
@@ -200,26 +196,26 @@ describe('GET/ users:uid', () => {
     it('Debería retornar el usuario llamado por Email', async() => {
         const user = await postUser(requestOfPostUsers3, resp, next);
         responseObjectOfUser3._id = user._id;
-        const functTest = await getUserId(requestOfGetUsersByEmail, resp, next);
+        const functTest = await getUserUid(requestOfGetUsersByEmail, resp, next);
         resp.send.mockReturnValue(functTest)
         expect(resp.send()).toEqual(responseObjectOfUser3);
     });
     it('Debería retornar un error 404 si se ingresa un parametro uid invalido', async() => {
         const user = await postUser(requestOfPostUsers3, resp, next);
         requestOfGetUsersById.params.uid = '5d4916541d4f9a3b2dcac66d';
-        await getUserId(requestOfGetUsersById, resp, next);
+        await getUserUid(requestOfGetUsersById, resp, next);
         expect(next.mock.calls[0][0]).toBe(404);
     });
 });
 
-// PUT method
+
 
 const requestOfPostUsersFromPut = {
     headers: {
         authorization: '',
     },
     body: {
-        email: 'arianna@gmail.com',
+        email: 'jess2@gmail.com',
         password: '123456'
     },
 };
@@ -228,14 +224,14 @@ const emptyOfPostUsersFromPut = {
         authorization: '',
         user: {
             roles: { admin: false },
-            email: 'arianna@gmail.com',
+            email: 'jess2@gmail.com',
         }
     },
     body: {
         email: ''
     },
     params: {
-        uid: 'arianna@gmail.com'
+        uid: 'jess2@gmail.com'
     }
 };
 const requestOfPutUsersByEmail = {
@@ -243,14 +239,14 @@ const requestOfPutUsersByEmail = {
         authorization: '',
         user: {
             roles: { admin: false },
-            email: 'arianna@gmail.com',
+            email: 'jess2@gmail.com',
         }
     },
     body: {
-        email: 'marjo1@labo.la',
+        email: 'jesseliz3@gmail.com',
     },
     params: {
-        uid: 'arianna@gmail.com'
+        uid: 'jess2@gmail.com'
     }
 };
 const requestOfPutModifyRoles = {
@@ -258,7 +254,7 @@ const requestOfPutModifyRoles = {
         authorization: '',
         user: {
             roles: { admin: false },
-            email: 'arianna@gmail.com',
+            email: 'jess2@gmail.com',
         }
     },
     body: {
@@ -267,10 +263,9 @@ const requestOfPutModifyRoles = {
         }
     },
     params: {
-        uid: 'arianna@gmail.com'
+        uid: 'jess2@gmail.com'
     }
 };
-
 describe('PUT/ users:uid', () => {
     const response = {
         send: jest.fn(json => json),
@@ -287,11 +282,11 @@ describe('PUT/ users:uid', () => {
                 user: {
                     roles: { admin: false },
                     _id: userFromTestPut._id.toString(), //5d4916541d4f9a3b2dcac66d,
-                    email: 'arianna@gmail.com',
+                    email: 'jess2@gmail.com',
                 }
             },
             body: {
-                email: 'marjo@labo.la',
+                email: 'jesse@gmail.com',
                 password: 'abcdefg'
             },
             params: {
@@ -337,11 +332,11 @@ const requestDeleteUsersByEmail = {
         user: {
             roles: { admin: false },
             _id: 'xxxxxxxxxxxxxxxxxxxx', //5d4916541d4f9a3b2dcac66d,
-            email: 'delete@labo.la',
+            email: 'delete@gmail.com',
         }
     },
     params: {
-        uid: 'delete@labo.la'
+        uid: 'delete@gmail.com'
     }
 };
 const requestAdminToDelete = {
@@ -350,11 +345,11 @@ const requestAdminToDelete = {
         user: {
             roles: { admin: true },
             _id: 'xxxxxxxxxxxxxxxxxxxx', //5d4916541d4f9a3b2dcac66d,
-            email: 'delete@labo.la',
+            email: 'delete@gmail.com',
         }
     },
     params: {
-        uid: 'delete@labo.la'
+        uid: 'delete@gmail.com'
     }
 };
 let requestOfPostUsersFromDelete = {
@@ -362,7 +357,7 @@ let requestOfPostUsersFromDelete = {
         authorization: '',
     },
     body: {
-        email: 'delete@labo.la',
+        email: 'delete@gmail.com',
         password: '123456',
     },
 };
@@ -404,13 +399,13 @@ describe('DELETE/ users:uid', () => {
         };
         const userDeleted = await deleteUser(requestDeleteUsersById, respon, next);
         respon.send.mockReturnValue(userDeleted);
-        expect(respon.send()).toEqual({ message: 'Se eliminó usuario satisfactoriamente' });
+        expect(respon.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
     });
     it('Debería elimiar un usuario creado por email', async() => {
         await postUser(requestOfPostUsersFromDelete, respon, next);
         const userDeleted2 = await deleteUser(requestAdminToDelete, respon, next);
         respon.send.mockReturnValue(userDeleted2);
-        expect(respon.send()).toEqual({ message: 'Se eliminó usuario satisfactoriamente' });
+        expect(respon.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
     });
 
     it('Debería retornar un error 404 si se ingresa un id invalid', async() => {

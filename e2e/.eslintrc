@@ -1,19 +1,5 @@
 {
   "env": {
     "jest": true
-  },
-
-  "rules": {
-      "no-unused-expressions": "off",
-      "no-underscore-dangle":  "off"
-  },
-
-  "overrides": [
-      {
-          "files": ["*.test.js", "*.spec.js"],
-          "rules": {
-              "no-unused-expressions": "off"
-          }
-      }
-  ]
+  }
 }

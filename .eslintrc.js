@@ -4,7 +4,6 @@ module.exports = {
         "commonjs": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
@@ -12,19 +11,8 @@ module.exports = {
         "exports":false
     },
     "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+        "ecmaVersion": 2018
     },
-    "parser": "babel-eslint",
-    "plugins": [
-        "react"
-    ],
     "rules": {
-        "no-undef": "off",
-        "no-unused-vars": "off",
-        "no-unused-expressions": "off"
     }
 };
