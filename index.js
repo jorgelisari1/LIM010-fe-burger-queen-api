@@ -15,13 +15,14 @@ app.use(cors());
 
 // TO DO: Conección a la BD en mogodb
 //Aqui conectamos con la base de datos de mongodb
-mongoose.connect(dbUrl, { useNewUrlParser: true })
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('connected'); //si consoleas esta pagina te sale este connected y puedes verificar en la consola de mongod.exe
     }).catch((e) => {
         console.log(e);
     })
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 app.set('config', config);
 app.set('pkg', pkg);
 
