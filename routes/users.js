@@ -164,5 +164,6 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.delete('/users/:uid', requireAdminOrUser, deleteUser);
+   
     initAdminUser(app, next);
 };
